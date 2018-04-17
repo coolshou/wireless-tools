@@ -150,6 +150,34 @@ get_info(int			skfd,
 
   return(0);
 }
+
+/*------------------------------------------------------------------*/
+/*
+ * Convert a frequency to a channel (negative -> error)
+ */
+#define FREQ5GBASE 5180000000
+#define FREQ2GBASE 2412000000
+int
+freq_to_channel(double	freq)
+{
+  //double	ref_freq;
+  int		k=0;
+
+  /* Check if it's a frequency or not already a channel */
+  if(freq < KILO)
+    return(-1);
+  
+	if (freq>=FREQ5GBASE) //5G
+	{
+		k= (freq - FREQ5GBASE)/1000000/5 + 36;
+		return(k);
+	} else if (freq>=FREQ2GBASE) //2.4G
+	{
+		k= (freq - FREQ2GBASE)/1000000/5 + 1;
+		return(k);
+	}
+  return(-2);
+}
 /*------------------------------------------------------------------*/
 /*
  * Print on the screen in a neat fashion all the info we have collected
@@ -172,19 +200,14 @@ display_freq(struct wireless_info *	info,
 	{
 		double		freq = info->b.freq;	/* Frequency/channel */
 		int		channel = -1;		/* Converted to channel */
-		/* Some drivers insist of returning channel instead of frequency.
-			* This fixes them up. Note that, driver should still return
-			* frequency, because other tools depend on it. */
-		if(info->has_range && (freq < KILO))
-			channel = iw_channel_to_freq((int) freq, &freq, &info->range);
-		else
-			channel = iw_freq_to_channel(freq, &info->range);
+  	channel = freq_to_channel(freq);
 		/* Display */
 		iw_print_freq(buffer, sizeof(buffer), freq, channel, info->b.freq_flags);
 		printf("%s  ", buffer);
 		tokens +=4;
+		
 	}
-
+	//printf(",Channel:%s", channel);
 
   printf("\n");
 }
