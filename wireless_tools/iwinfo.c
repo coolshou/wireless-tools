@@ -177,8 +177,10 @@ display_freq(struct wireless_info *	info,
 			* frequency, because other tools depend on it. */
 		if(info->has_range && (freq < KILO))
 			channel = iw_channel_to_freq((int) freq, &freq, &info->range);
+		else
+			channel = iw_freq_to_channel(freq, &info->range);
 		/* Display */
-		iw_print_freq(buffer, sizeof(buffer), freq, -1, info->b.freq_flags);
+		iw_print_freq(buffer, sizeof(buffer), freq, channel, info->b.freq_flags);
 		printf("%s  ", buffer);
 		tokens +=4;
 	}
@@ -520,14 +522,24 @@ print_info(int		skfd,
 
   /* Avoid "Unused parameter" warning */
   args = args; count = count;
-
+	//fprintf(stderr, "argv: %i\n", count);
+	char f[4];
   rc = get_info(skfd, ifname, &info);
   switch(rc)
     {
     case 0:	/* Success */
       /* Display it ! */
-			if (args)
-				display_freq(&info, ifname);
+			if (args) {
+				if(sscanf(args, "%s", f) != 1) //int
+					fprintf(stderr, "args: %s\n", f);
+				else
+					//frequency
+					if((strcmp ("Freq", f) == 0)||(strcmp ("freq", f) == 0)||
+						 (strcmp ("F", f) == 0) || (strcmp ("f", f) == 0)){
+						display_freq(&info, NULL);
+					} else 
+						fprintf(stderr, "Wrong info key: %s\n", f);
+			}
 			else
 				display_info(&info, ifname);
       
@@ -1943,7 +1955,7 @@ iw_usage(void)
 {
   int i;
 
-  fprintf(stderr,   "Usage: iwconfig [interface]\n");
+  fprintf(stderr,   "Usage: iwinfo [interface]\n");
   for(i = 0; iwconfig_cmds[i].cmd != NULL; ++i)
     fprintf(stderr, "                interface %s %s\n",
 	    iwconfig_cmds[i].cmd, iwconfig_cmds[i].argsname);
@@ -1994,11 +2006,12 @@ main(int	argc,
 	  /* The device name must be the first argument */
 	  if(argc == 2)
 	    goterr = print_info(skfd, argv[1], NULL, 0);
-	  else
+	  else if(argc == 3)
 			//display specify info: eg: freq
-			goterr = print_info(skfd, argv[1], argv[2], 0);
+			goterr = print_info(skfd, argv[1], argv[2], argc);
+		else
 	    /* The other args on the line specify options to be set... */
-	    //goterr = set_info(skfd, argv + 2, argc - 2, argv[1]);
+	    goterr = set_info(skfd, argv + 2, argc - 2, argv[1]);
 	}
 
   /* Close the socket. */

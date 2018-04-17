@@ -1187,10 +1187,10 @@ iw_print_freq(char *	buffer,
     {
       /* Frequency. Check if we have a channel as well */
       if(channel >= 0)
-	snprintf(buffer, buflen, "Frequency%c%s (Channel %d)",
-		 sep, vbuf, channel);
+	      snprintf(buffer, buflen, "Frequency%c%s ,Channel%c%d",
+		             sep, vbuf, sep, channel);
       else
-	snprintf(buffer, buflen, "Frequency%c%s", sep, vbuf);
+	      snprintf(buffer, buflen, "Frequency%c%s", sep, vbuf);
     }
 }
 
