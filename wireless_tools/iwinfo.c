@@ -1993,7 +1993,7 @@ main(int	argc,
     else
       /* Special case for version... */
       if(!strcmp(argv[1], "-v") || !strcmp(argv[1], "--version"))
-	goterr = iw_print_version_info("iwconfig");
+				goterr = iw_print_version_info("iwinfo");
       else
 	{
 	  /* '--' escape device name */

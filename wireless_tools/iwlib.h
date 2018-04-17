@@ -71,7 +71,7 @@ extern "C" {
 #define WE_MAX_VERSION	22
 /* Version of Wireless Tools */
 #define WT_VERSION	30
-
+#define WTINFO_VERSION	20180417
 /****************************** TYPES ******************************/
 
 /* Shortcuts */

@@ -451,8 +451,8 @@ iw_print_version_info(const char *	toolname)
 
   /* Information about the tools themselves */
   if(toolname != NULL)
-    printf("%-8.16s  Wireless-Tools version %d\n", toolname, WT_VERSION);
-  printf("          Compatible with Wireless Extension v11 to v%d.\n\n",
+    printf("%-8.16s  Wireless-Tools version %d-%d\n", toolname, WT_VERSION, WTINFO_VERSION);
+    printf("          Compatible with Wireless Extension v11 to v%d.\n\n",
 	 WE_MAX_VERSION);
 
   /* Get version from kernel */
