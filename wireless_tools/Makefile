@@ -27,7 +27,7 @@ BUILD_STATIC = y
 
 ## Uncomment this to strip binary from symbols. This reduce binary size.
 ## by a few percent but make debug worse...
-# BUILD_STRIPPING = y
+BUILD_STRIPPING = y
 
 ## Uncomment this to build with only essential functionality.
 ## This leaves out the less used features and cut in half the tools.
@@ -50,7 +50,7 @@ WEXT_HEADER = wireless.$(WE_VERSION).h
 # Targets to build
 STATIC=libiw.a
 DYNAMIC=libiw.so.$(WT_VERSION)
-PROGS= iwconfig iwlist iwpriv iwspy iwgetid iwevent ifrename
+PROGS= iwconfig iwlist iwpriv iwspy iwgetid iwevent ifrename iwinfo
 MANPAGES8=iwconfig.8 iwlist.8 iwpriv.8 iwspy.8 iwgetid.8 iwevent.8 ifrename.8
 MANPAGES7=wireless.7
 MANPAGES5=iftab.5
@@ -120,6 +120,8 @@ all:: $(IWLIB) $(PROGS)
 	$(CC) $(XCFLAGS) -c $<
 %.so: %.c wireless.h
 	$(CC) $(XCFLAGS) $(PICFLAG) -c -o $@ $<
+
+iwinfo: iwinfo.o $(IWLIB)
 
 iwconfig: iwconfig.o $(IWLIB)
 
@@ -206,6 +208,7 @@ install-iwmulticall:: iwmulticall
 clean::
 	$(RM_CMD)
 
+distclean:: realclean
 realclean::
 	$(RM_CMD)
 	$(RM) $(STATIC) $(DYNAMIC) $(PROGS) $(EXTRAPROGS) libiw* wireless.h
